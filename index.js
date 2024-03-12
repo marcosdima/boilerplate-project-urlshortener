@@ -29,7 +29,7 @@ let arrayOfResults = []
 
 app.post("/api/shorturl", (req, res) => {
   const original = req.body.url;
-  
+
   if (!valid_url(original))
     return res.json({ error: 'invalid url' });
   counter++;
@@ -60,11 +60,11 @@ app.listen(port, function() {
 });
 
 function valid_url(url) {
-  const ending = ['.com', '.org']
-  const start_ok = url.startsWith("https://www.");
-  const ends_ok = ending.includes(
-    url.substring(url.length - 4, url.length -1)
-  );
+  const endings = ['.com', '.org', ".io"];
+  const start_ok = url.startsWith("https://");
+  let ends_ok = false;
+  
+  for (let ending of endings) if (url.includes(ending)) ends_ok = true;
 
   return start_ok && ends_ok;
 }
