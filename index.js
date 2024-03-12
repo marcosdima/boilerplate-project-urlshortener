@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+let bodyParser = require('body-parser');
 const app = express();
 
 // Basic Configuration
@@ -17,6 +18,40 @@ app.get('/', function(req, res) {
 // Your first API endpoint
 app.get('/api/hello', function(req, res) {
   res.json({ greeting: 'hello API' });
+});
+
+// Code
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+let counter = 0;
+let arrayOfResults = []
+
+app.post("/api/shorturl", (req, res) => {
+  const original = req.body.url;
+  if (!original.startsWith("https://www." || !original.endsWith(".com")))
+    return res.json({ error: 'invalid url' });
+  counter++;
+
+  const data = {
+    "original_url": original,
+    "short_url": counter
+  }
+
+  arrayOfResults.push(data);
+  res.json(data);
+});
+
+app.get("/api/shorturl/:short_url", (req, res) => {
+  let id = req.params.short_url;
+
+  if ((Number.isInteger(Number(id)))) id = parseInt(id);
+  else return res.json({ error: 'invalid url' });
+
+  let index = id - 1;
+  console.log(arrayOfResults)
+  if (index < arrayOfResults.length) res.json(arrayOfResults[index]);
+  else return res.json({ error: 'invalid id' });
 });
 
 app.listen(port, function() {
