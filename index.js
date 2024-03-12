@@ -29,7 +29,8 @@ let arrayOfResults = []
 
 app.post("/api/shorturl", (req, res) => {
   const original = req.body.url;
-  if (!original.startsWith("https://www." || !original.endsWith(".com")))
+  
+  if (valid_url(original))
     return res.json({ error: 'invalid url' });
   counter++;
 
@@ -49,11 +50,21 @@ app.get("/api/shorturl/:short_url", (req, res) => {
   else return res.json({ error: 'invalid url' });
 
   let index = id - 1;
-  console.log(arrayOfResults)
-  if (index < arrayOfResults.length) res.json(arrayOfResults[index]);
+
+  if (index < arrayOfResults.length) res.redirect(arrayOfResults[index].original_url);
   else return res.json({ error: 'invalid id' });
 });
 
 app.listen(port, function() {
   console.log(`Listening on port ${port}`);
 });
+
+function valid_url(url) {
+  const ending = ['.com', '.org']
+  const start_ok = url.startsWith("https://www.");
+  const ends_ok = ending.includes(
+    url.substring(url.length - 4, url.length -1)
+  );
+
+  return start_ok && ends_ok;
+}
