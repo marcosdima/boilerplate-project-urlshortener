@@ -30,7 +30,7 @@ let arrayOfResults = []
 app.post("/api/shorturl", (req, res) => {
   const original = req.body.url;
   
-  if (valid_url(original))
+  if (!valid_url(original))
     return res.json({ error: 'invalid url' });
   counter++;
 
